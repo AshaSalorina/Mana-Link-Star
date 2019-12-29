@@ -1,0 +1,3 @@
+Menu,start,开始游戏
+Menu,exit,退出游戏
+Menu,title,标题
