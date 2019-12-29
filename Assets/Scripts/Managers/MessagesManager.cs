@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Asha.Data
+namespace Asha.Managers
 {
     /**
      * 理论模型：
@@ -14,27 +14,58 @@ namespace Asha.Data
     public delegate void 监听器(object[] 参数表 = null);
 
     /// <summary>
+    /// 消息类型列表
+    /// </summary>
+    public enum MessageType
+    {
+
+    }
+
+
+    /// <summary>
     /// 全局消息传递器
     /// </summary>
-    public class MessagesManager
+    public class MessagesManager: MonoBehaviour
     {
-        private static Dictionary<string, List<监听器>> messages;
+
+        protected static MessagesManager _inst;
+        static MessagesManager()
+        {
+            if (_inst == null)
+            {
+                var go = new GameObject("MessagesManager");
+                go.transform.SetParent(MOM.GetMOM().gameObject.transform);
+                DontDestroyOnLoad(go);
+                _inst = go.AddComponent<MessagesManager>();
+            }
+        }
+
+        /// <summary>
+        /// 获取MOM
+        /// </summary>
+        /// <returns></returns>
+        public static MessagesManager GetMOM()
+        {
+            return _inst;
+        }
+
+        private  Dictionary<MessageType, List<监听器>> messages;
 
         /// <summary>
         /// 监听列表
         /// </summary>
-        public static Dictionary<string, List<监听器>> Messages => messages;
+        public  Dictionary<MessageType, List<监听器>> Messages => messages;
 
         /// <summary>
         /// 设置监听方法
         /// </summary>
         /// <param name="消息类型"></param>
         /// <param name="listener"></param>
-        public static void ConnectMessage(string 消息类型, 监听器 listener)
+        public  void ConnectMessage(MessageType 消息类型, 监听器 listener)
         {
-            if (Messages.ContainsKey(消息类型))
+            if (messages.ContainsKey(消息类型))
             {
-                Messages[消息类型].Add(listener);
+                messages[消息类型].Add(listener);
             }
             else
             {
@@ -42,7 +73,7 @@ namespace Asha.Data
                 {
                     listener
                 };
-                Messages.Add(消息类型, 监听器组);
+                messages.Add(消息类型, 监听器组);
             }
         }
 
@@ -51,11 +82,11 @@ namespace Asha.Data
         /// </summary>
         /// <param name="消息类型"></param>
         /// <param name="listener"></param>
-        public static void DisconnectMessage(string 消息类型, 监听器 listener)
+        public  void DisconnectMessage(MessageType 消息类型, 监听器 listener)
         {
-            if (Messages.ContainsKey(消息类型))
+            if (messages.ContainsKey(消息类型))
             {
-                Messages[消息类型].Remove(listener);
+                messages[消息类型].Remove(listener);
             }
         }
 
@@ -64,12 +95,13 @@ namespace Asha.Data
         /// </summary>
         /// <param name="消息类型"></param>
         /// <param name="参数表"></param>
-        public static void SendMessage(string 消息类型, object[] 参数表 = null)
+        public  void SendMessage(MessageType 消息类型, object[] 参数表 = null)
         {
+            Debug.Log($"事件{消息类型}被触发");
             //依次执行所有监听该消息的方法
-            if (Messages.ContainsKey(消息类型))
+            if (messages.ContainsKey(消息类型))
             {
-                foreach (var func in Messages[消息类型])
+                foreach (var func in messages[消息类型])
                 {
                     func(参数表);
                 }

@@ -6,31 +6,47 @@ using Asha.UI;
 
 namespace Asha.Managers
 {
-    public class UIManager
+    public class UIManager: MonoBehaviour
     {
-        /// <summary>
-        /// UI根节点管理
-        /// </summary>
-        public static Dictionary<string, Transform> UIRoot = new Dictionary<string, Transform>();
+        protected static UIManager _inst;
+        static UIManager()
+        {
+            if(_inst == null)
+            {
+                var go = new GameObject("UIManager");
+                go.transform.SetParent(MOM.GetMOM().gameObject.transform);
+                DontDestroyOnLoad(go);
+                _inst = go.AddComponent<UIManager>();
+            }
+        }
+        public static UIManager GetUIManager()
+        {
+            return _inst;
+        }
+
+        ///// <summary>
+        ///// UI根节点管理
+        ///// </summary>
+        //public Dictionary<string, Transform> UIRoot = new Dictionary<string, Transform>();
 
         /// <summary>
         /// UI堆管理
         /// </summary>
-        private static Dictionary<string, BaseUI> UIDictionary = new Dictionary<string, BaseUI>();
+        private Dictionary<string, BaseUI> UIDictionary = new Dictionary<string, BaseUI>();
 
         /// <summary>
         /// UI调用栈
         /// 在一个无源头跳转之后UI的跳转历史应当被清空
         /// 栈中最多存放10个元素
         /// </summary>
-        private static List<BaseUI> UIHistory = new List<BaseUI>();
+        private List<BaseUI> UIHistory = new List<BaseUI>();
 
         /// <summary>
         /// 创建并显示UI
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T CreateUI<T>(bool callHistory = true) where T : BaseUI, new()
+        public T CreateUI<T>(bool callHistory = true) where T : BaseUI, new()
         {
             T ui = new T();
             if (!UIDictionary.ContainsKey(ui.ClassName))
@@ -64,7 +80,7 @@ namespace Asha.Managers
         /// 销毁指定UI对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public static void DestroyUI<T>(bool callHistory = true) where T : BaseUI, new()
+        public void DestroyUI<T>(bool callHistory = true) where T : BaseUI, new()
         {
             // 先进行回调
             if (callHistory)
@@ -92,7 +108,7 @@ namespace Asha.Managers
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="CallHistory"></param>
-        public static void DisableUI<T>(bool callHistory = true) where T : BaseUI, new()
+        public void DisableUI<T>(bool callHistory = true) where T : BaseUI, new()
         {
             // 先进行回调
             if (callHistory)
@@ -118,7 +134,7 @@ namespace Asha.Managers
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="CallHistory"></param>
-        public static void EnableUI<T>(bool callHistory = true) where T : BaseUI, new()
+        public void EnableUI<T>(bool callHistory = true) where T : BaseUI, new()
         {
             T ui = new T();
             if (UIDictionary.ContainsKey(ui.ClassName))
@@ -141,7 +157,7 @@ namespace Asha.Managers
         /// 记录调用历史记录
         /// </summary>
         /// <param name="baseUI"></param>
-        private static void SetHistory(BaseUI baseUI)
+        private void SetHistory(BaseUI baseUI)
         {
             UIHistory.Add(baseUI);
             while (UIHistory.Count > 10)
@@ -153,7 +169,7 @@ namespace Asha.Managers
         /// <summary>
         /// 从末端调取UI历史记录
         /// </summary>
-        private static BaseUI CallHistory()
+        private BaseUI CallHistory()
         {
             BaseUI history = null;
             if (UIHistory.Count > 0)

@@ -12,10 +12,7 @@ namespace Asha.Data
     {
         private static TextDataStruct textData = new TextDataStruct();
 
-        public static TextDataStruct TextData
-        {
-            get { return textData; }
-        }
+        public static TextDataStruct TextData => textData;
 
         /// <summary>
         /// 初始化默认描述文件
