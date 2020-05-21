@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Asha.UI
 {
-    public class BaseUI : MonoBehaviour
+    public class BaseUI
     {
         public string ClassName
         {

@@ -13,6 +13,17 @@ namespace Asha.Data
         private static TextDataStruct textData = new TextDataStruct();
 
         public static TextDataStruct TextData => textData;
+        
+        /// <summary>
+        /// 存储玩家角色信息
+        /// </summary>
+        public static BaseCharacter Player;
+
+        /// <summary>
+        /// 存储战斗中的敌对单位信息
+        /// </summary>
+        public static BaseCharacter[] Enemys;
+
 
         /// <summary>
         /// 初始化默认描述文件
@@ -62,6 +73,7 @@ namespace Asha.Data
                             break;
                     }
                 }
+                reader.Close();
             }
             catch (System.Exception e)
             {
@@ -78,4 +90,5 @@ namespace Asha.Data
             public Dictionary<string, string> Skill;
         }
     }
+
 }

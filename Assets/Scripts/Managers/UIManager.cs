@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Asha.UI;
+using System;
 
 namespace Asha.Managers
 {
@@ -52,9 +53,18 @@ namespace Asha.Managers
             if (!UIDictionary.ContainsKey(ui.ClassName))
             {
                 // 创建对象
-                ui.GameObject = GameObject.Instantiate(Resources.Load<GameObject>(ui.Resource));
+                var go = GameObject.Instantiate(Resources.Load<GameObject>(ui.Resource), GameObject.Find("Canvas").transform);
                 // 调用实例化方法
-                ui.Init();
+                try
+                {
+                    ui.GameObject = go;
+                    ui.Init();
+                }
+                catch(Exception e)
+                {
+                    Destroy(ui.GameObject);
+                    throw e;
+                }
                 UIDictionary.Add(ui.ClassName, ui);
             }
             else
@@ -139,6 +149,7 @@ namespace Asha.Managers
             T ui = new T();
             if (UIDictionary.ContainsKey(ui.ClassName))
             {
+                ui = (T)UIDictionary[ui.ClassName];
                 UIDictionary[ui.ClassName].GameObject.SetActive(true);
                 // 设置为最前
                 ui.GameObject.transform.SetSiblingIndex(ui.GameObject.transform.parent.childCount - 1);

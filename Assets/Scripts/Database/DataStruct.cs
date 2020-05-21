@@ -5,11 +5,16 @@ using UnityEngine.UI;
 
 namespace Asha.Data
 {
+
     /// <summary>
     /// 按钮对象单选组
     /// </summary>
     public class ButtonSingle : Single<Button>
     {
+        public ButtonSingle()
+        {
+            singleDatas = new List<Button>();
+        }
         /// <summary>
         /// 添加按钮到组中，并自动添加选中监听
         /// </summary>
@@ -63,6 +68,7 @@ namespace Asha.Data
     /// </summary>
     public class GameObjectSingle : Single<GameObject>
     {
+
         public override Single<GameObject> Add(GameObject obj)
         {
             if (!singleDatas.Contains(obj))
@@ -76,7 +82,7 @@ namespace Asha.Data
         {
             foreach (var item in singleDatas)
             {
-                obj.SetActive(反转 ? item != obj : item == obj);
+                item.SetActive(反转 ? item != obj : item == obj);
             }
             return this;
         }
@@ -96,7 +102,7 @@ namespace Asha.Data
     /// </summary>
     public abstract class Single<T>
     {
-        protected List<T> singleDatas;
+        protected List<T> singleDatas = new List<T>();
         public bool 反转 { get; set; } = false;
 
         public abstract Single<T> Add(T obj);

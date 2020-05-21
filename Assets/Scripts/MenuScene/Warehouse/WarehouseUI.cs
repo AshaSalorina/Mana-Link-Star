@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 namespace Asha.UI
 {
-    public class WarehouseUI : BaseUI
+
+    public class WarehouseUI: MonoBehaviour
     {
         #region 仓库按钮组
 
@@ -33,9 +34,7 @@ namespace Asha.UI
 
         #endregion 仓库页面组
 
-        public override string Resource => "Prefabs/Main/WarehouseUI";
-
-        public override void Init()
+        public void Start()
         {
             try
             {
@@ -63,13 +62,27 @@ namespace Asha.UI
                 });
                 退出.onClick.AddListener(() =>
                 {
-                    //Managers.UIManager.
+                    Managers.UIManager.GetUIManager().DisableUI<WarehouseUI_Info>();
                 });
+
+                配置符文.onClick.Invoke();
             }
             catch (System.Exception)
             {
                 throw;
             }
         }
+
+        private void OnEnable()
+        {
+            配置符文.onClick.Invoke();
+        }
     }
+
+    public class WarehouseUI_Info : BaseUI
+    {
+        public override string Resource => "Prefabs/Main/WarehouseUI";
+    }
+
+
 }
